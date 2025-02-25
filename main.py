@@ -10,11 +10,11 @@ API_KEY_STATIC = 'f3a0fe3a-b07e-4840-a1da-06f18b2ddf13'
 class Search:
     def __init__(self, *args, **kwargs):
         self.ll = '37.541425%2C55.749132'
-        self.zoom = '10'
+        self.zoom = 10
 
     def get_map(self):
         if self.ll:
-            map_request = f"https://static-maps.yandex.ru/v1?apikey={API_KEY_STATIC}&ll={self.ll}"
+            map_request = f"https://static-maps.yandex.ru/v1?apikey={API_KEY_STATIC}&ll={self.ll}&z={self.zoom}"
         else:
             map_request = f"https://static-maps.yandex.ru/v1?apikey={API_KEY_STATIC}"
         # if add_params:
@@ -43,10 +43,21 @@ def main():
 
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
-    screen.blit(pygame.image.load(file), (0, 0))
-    pygame.display.flip()
     while pygame.event.wait().type != pygame.QUIT:
-        pass
+        screen.fill((0, 0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_PAGEUP:
+                    if map1.zoom < 21:
+                        map1.zoom += 1
+                if event.key == pygame.K_PAGEDOWN:
+                    if map1.zoom > 0:
+                        map1.zoom -= 1
+        file = map1.draw_map()
+        screen.blit(pygame.image.load(file), (0, 0))
+        pygame.display.flip()
     pygame.quit()
     os.remove(file)
 
